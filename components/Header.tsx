@@ -7,6 +7,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { HiHome } from "react-icons/hi";
 import { BiSearch } from "react-icons/bi";
+import { IoExitOutline } from "react-icons/io5";
 
 import { useUser } from "@/hooks/useUser";
 // import usePlayer from "@/hooks/usePlayer";
@@ -14,6 +15,8 @@ import { useUser } from "@/hooks/useUser";
 import Button from "./Button";
 import useAuthModal from "@/hooks/useAuthModal";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { AiOutlinePlus } from "react-icons/ai";
+import useUploadModal from "@/hooks/useUploadModal";
 
 interface HeaderProps {
     children: React.ReactNode;
@@ -26,10 +29,11 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
     //   const player = usePlayer();
     const router = useRouter();
-      const authModal = useAuthModal();
+    const uploadModal = useUploadModal();
+    const authModal = useAuthModal();
 
-      const supabaseClient = useSupabaseClient();
-      const { user } = useUser();
+    const supabaseClient = useSupabaseClient();
+    const { user } = useUser();
 
     const handleLogout = async () => {
         const { error } = await supabaseClient.auth.signOut();
@@ -37,10 +41,17 @@ const Header: React.FC<HeaderProps> = ({
         router.refresh();
 
         if (error) {
-          toast.error(error.message)
-        }else{
+            toast.error(error.message)
+        } else {
             toast.success('Logged out!')
         }
+    }
+
+    const onClick = () => {
+        if (!user) {
+            return authModal.onOpen();
+        }
+        return uploadModal.onOpen();
     }
 
     return (
@@ -65,11 +76,11 @@ const Header: React.FC<HeaderProps> = ({
             >
                 <div
                     className="
-                hidden
-                md:flex
-                gap-x-2
-                items-center
-                "
+                    hidden
+                    md:flex
+                    gap-x-2
+                    items-center
+                    "
                 >
 
                     <button
@@ -102,22 +113,25 @@ const Header: React.FC<HeaderProps> = ({
                     </button>
                 </div>
                 <div className="flex md:hidden gap-x-2 items-center">
-                    <button
-                        onClick={() => router.push('/')}
-                        className="
-              rounded-full 
-              p-2 
-              bg-white 
-              flex 
-              items-center 
-              justify-center 
-              cursor-pointer 
-              hover:opacity-75 
-              transition
-            "
-                    >
-                        <HiHome className="text-black" size={20} />
-                    </button>
+                    <div>
+                        <button
+                            onClick={() => router.push('/')}
+                            className="
+                                rounded-full 
+                                p-2 
+                                bg-white 
+                                flex 
+                                items-center 
+                                justify-center 
+                                cursor-pointer 
+                                hover:opacity-75 
+                                transition
+                                "
+                        >
+                            <HiHome className="text-black" size={20} />
+                        </button>
+                    </div>
+
                     <button
                         onClick={() => router.push('/search')}
                         className="
@@ -134,47 +148,98 @@ const Header: React.FC<HeaderProps> = ({
                     >
                         <BiSearch className="text-black" size={20} />
                     </button>
+                    <button
+                        onClick={onClick}
+                        className="
+                            rounded-full 
+                            p-2 
+                            bg-white 
+                            flex 
+                            items-center 
+                            justify-center 
+                            cursor-pointer 
+                            hover:opacity-75 
+                            transition
+                        "
+                    >
+                        <AiOutlinePlus className="text-black" size={20} />
+                    </button>
                 </div>
                 <div className="flex justify-between items-center gap-x-4">
                     {user ? (
                         <div className="flex gap-x-4 items-center">
-                            <Button
-                                onClick={handleLogout}
-                                className="bg-white px-6 py-2"
+                            <div
+                                className="
+                            hidden
+                            md:flex
+                            gap-x-2
+                            items-center
+                            "
                             >
-                                Logout
-                            </Button>
-                            <Button
-                                onClick={() => router.push('/account')}
-                                className="bg-white"
-                            >
-                                <FaUserAlt />
-                            </Button>
+                                <Button
+                                    onClick={handleLogout}
+                                    className="bg-white px-6 py-2"
+                                >
+                                    Logout
+                                </Button>
+                                <Button
+                                    onClick={() => { }}
+                                    className="bg-white"
+                                >
+                                    <FaUserAlt />
+                                </Button>
+                            </div>
+
+
+                            <div className="flex md:hidden gap-x-2 items-center">
+                                <Button
+                                    onClick={handleLogout}
+                                    className="
+                            rounded-full 
+                            p-2 
+                            bg-white 
+                            flex 
+                            items-center 
+                            justify-center 
+                            cursor-pointer 
+                            hover:opacity-75 
+                            transition
+                        "
+                                >
+                                    <IoExitOutline size={25} />
+                                </Button>
+                                <Button
+                                    onClick={() => { }}
+                                    className="bg-white"
+                                >
+                                    <FaUserAlt />
+                                </Button>
+                            </div>
                         </div>
                     ) : (
-                    <>
-                        <div>
-                            <Button
-                                onClick={authModal.onOpen}
-                                className="
+                        <>
+                            <div>
+                                <Button
+                                    onClick={authModal.onOpen}
+                                    className="
                                 bg-transparent 
                                 text-neutral-300 
                                 font-medium
                             "
-                            >
-                                Sign up
-                            </Button>
-                        </div>
-                        <div>
-                            <Button
-                                onClick={authModal.onOpen}
-                                className="bg-white px-6 py-2"
-                            >
-                                Log in
-                            </Button>
-                        </div>
-                    </>
-                )}
+                                >
+                                    Sign up
+                                </Button>
+                            </div>
+                            <div>
+                                <Button
+                                    onClick={authModal.onOpen}
+                                    className="bg-white px-6 py-2"
+                                >
+                                    Log in
+                                </Button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             {children}
